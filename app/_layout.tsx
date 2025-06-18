@@ -1,68 +1,45 @@
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
+import { BackgroundProvider, useBackground } from "./BackgroundContext";
+import { Stack } from "expo-router";
 import { useFonts } from "expo-font";
-import * as SplashScreen from "expo-splash-screen";
-import { useEffect, useState } from "react";
-import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
-import { useColorScheme } from "@/components/useColorScheme";
-import { Slot } from "expo-router";
+import { StatusBar } from "expo-status-bar";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { PoemProvider } from "./PoemContext";
 
-import "../global.css";
-
-export {
-  // Catch any errors thrown by the Layout component.
-  ErrorBoundary,
-} from "expo-router";
-
-// export const unstable_settings = {
-//   // Ensure that reloading on `/modal` keeps a back button present.
-//   initialRouteName: "gluestack",
-// };
-
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
-
-export default function RootLayout() {
-  const [loaded, error] = useFonts({
-    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
-    ...FontAwesome.font,
-  });
-
-  const [styleLoaded, setStyleLoaded] = useState(false);
-  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
-  useEffect(() => {
-    if (error) throw error;
-  }, [error]);
-
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
-
-  // useLayoutEffect(() => {
-  //   setStyleLoaded(true);
-  // }, [styleLoaded]);
-
-  // if (!loaded || !styleLoaded) {
-  //   return null;
-  // }
-
-  return <RootLayoutNav />;
-}
-
-function RootLayoutNav() {
-  const colorScheme = useColorScheme();
+function LayoutContent() {
+  const { backgroundColor } = useBackground();
 
   return (
-    <GluestackUIProvider mode={colorScheme === "dark" ? "dark" : "light"}>
-      <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Slot />
-      </ThemeProvider>
-    </GluestackUIProvider>
+    <SafeAreaView style={{ flex: 1, backgroundColor }}>
+      <StatusBar style="light" backgroundColor={backgroundColor} />
+      <GestureHandlerRootView
+        style={{ flex: 1, backgroundColor: backgroundColor }}
+      >
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="index" options={{ title: "Veckans Dikt" }} />
+          <Stack.Screen name="archive" options={{ title: "Veckans Dikt" }} />
+        </Stack>
+      </GestureHandlerRootView>
+    </SafeAreaView>
+  );
+}
+
+export default function RootLayout() {
+  const [fontsLoaded] = useFonts({
+    TimesNewerRoman: require("../assets/fonts/TimesNewerRoman-Regular.otf"),
+    TimesNewerRomanBold: require("../assets/fonts/TimesNewerRoman-Bold.otf"),
+    TimesNewerRomanItalic: require("../assets/fonts/TimesNewerRoman-Italic.otf"),
+    TimesNewerRomanBoldItalic: require("../assets/fonts/TimesNewerRoman-BoldItalic.otf"),
+    SneakyTimes: require("../assets/fonts/Sneaky-Times.otf"),
+  });
+
+  if (!fontsLoaded) return null;
+
+  return (
+    <PoemProvider>
+      <BackgroundProvider>
+        <LayoutContent />
+      </BackgroundProvider>
+    </PoemProvider>
   );
 }

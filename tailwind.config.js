@@ -170,10 +170,11 @@ module.exports = {
         },
       },
       fontFamily: {
-        heading: undefined,
-        body: undefined,
-        mono: undefined,
-        roboto: ["Roboto", "sans-serif"],
+        "times-newer-roman": ["TimesNewerRoman", "serif"],
+        "times-newer-roman-bold": ["TimesNewerRomanBold", "serif"],
+        "times-newer-roman-italic": ["TimesNewerRomanItalic", "serif"],
+        "times-newer-roman-bold-italic": ["TimesNewerRomanBoldItalic", "serif"],
+        "sneaky-times": ["SneakyTimes", "serif"],
       },
       fontWeight: {
         extrablack: "950",
